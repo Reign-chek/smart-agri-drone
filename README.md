@@ -19,27 +19,27 @@ Traditional fumigation methods lead to chemical waste, high input costs, and neg
 | :--- | :--- |
 | **Payload Capacity** | 20 Liters (~20 kg liquid) |
 | **Frame Configuration** | Heavy-lift Carbon Fiber Quadcopter |
-| **Flight Controller** | Pixhawk 6X[cite: 1] |
-| **Onboard Computer** | NVIDIA Jetson Xavier NX[cite: 1] |
-| **Flight Height** | 2 – 3 meters above canopy during spraying[cite: 1] |
-| **Operational Speed** | 3 – 7 m/s[cite: 1] |
-| **Spray Swath Width** | 4 – 9 meters[cite: 1] |
-| **Field Capacity** | 10 – 15 hectares per operation cycle[cite: 1] |
-| **Network Protocols** | MAVLink, Wi-Fi 6 / 5G, LoRaWAN, MQTT[cite: 1] |
+| **Flight Controller** | Pixhawk 6X |
+| **Onboard Computer** | NVIDIA Jetson Xavier NX |
+| **Flight Height** | 2 – 3 meters above canopy during spraying |
+| **Operational Speed** | 3 – 7 m/s |
+| **Spray Swath Width** | 4 – 9 meters |
+| **Field Capacity** | 10 – 15 hectares per operation cycle |
+| **Network Protocols** | MAVLink, Wi-Fi 6 / 5G, LoRaWAN, MQTT |
 
 ---
 
 ## 👥 Sub-Team Organization & Work Streams
 
-To maintain system modularity and seamless collaboration, this repository is divided into 5 primary work streams[cite: 1]:
+To maintain system modularity and seamless collaboration, this repository is divided into 5 primary work streams:
 
 | Work Stream | Directory | Focus Area | Sub-Team Members |
 | :--- | :--- | :--- | :--- |
-| **ROS 2 Navigation** | `/ros/` | Flight control nodes, autonomous path planning, MAVLink bridge[cite: 1] | **Andrew & Takudzwa**[cite: 1] |
-| **Dashboard Interface** | `/dashboard/` | Farmer HMI, coverage mapping, live telemetry, cloud sync[cite: 1] | **Precious & Ian**[cite: 1] |
-| **Calculations & Math** | `/calculations/` | Aerodynamics, thrust-to-weight ratio, payload vs. battery curves, dosage[cite: 1] | **Misheck & Tatenda**[cite: 1] |
-| **CAD & Mechanical** | `/design/` | Carbon fiber frame modeling, 20L tank housing, sprayer nozzle assembly[cite: 1] | **Kudzi & Blessing**[cite: 1] |
-| **Electronics & Power** | `/electronics/` | Schematic design, PCB layouts, power distribution, pump relays[cite: 1] | **Isaiah & Munashe**[cite: 1] |
+| **ROS 2 Navigation** | `/ros/` | Flight control nodes, autonomous path planning, MAVLink bridge | **Andrew** |
+| **Dashboard Interface** | `/dashboard/` | Farmer HMI, coverage mapping, live telemetry, cloud sync | **Ian & Precious** |
+| **Calculations & Math** | `/calculations/` | Aerodynamics, thrust-to-weight ratio, payload vs. battery curves, dosage | **Misheck & Tatenda** |
+| **CAD & Mechanical** | `/design/` | Carbon fiber frame modeling, 20L tank housing, sprayer nozzle assembly | **Takudzwa & Blessing** |
+| **Electronics & Power** | `/electronics/` | Schematic design, PCB layouts, power distribution, pump relays | **Isaiah & Munashe** |
 
 ---
 
