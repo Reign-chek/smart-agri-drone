@@ -1,0 +1,17 @@
+# Build & Temp Files
+ros/build/
+ros/install/
+ros/log/
+node_modules/
+.next/
+dist/
+__pycache__/
+*.pyc
+*.mat
+*.slxc
+*.bak
+*.tmp
+*.lck
+*.sbr
+.DS_Store
+Thumbs.db
