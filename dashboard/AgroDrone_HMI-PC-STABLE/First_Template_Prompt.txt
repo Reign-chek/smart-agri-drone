@@ -1,0 +1,41 @@
+Act as a Senior Frontend & Robotics UI Developer. I am building a local web application dashboard for a Smart Agricultural Drone used in precision fumigation. The backend runs on a Raspberry Pi 5 aboard the drone, streaming telemetry via WebSocket/MQTT.
+
+Please build a complete, modern, single-page local Web App dashboard template using HTML5, Tailwind CSS (via CDN), vanilla JavaScript, and Leaflet.js for mapping.
+
+### Key Requirements & Layout:
+
+1. Design & Theme:
+   - Modern, high-contrast Dark Mode suitable for outdoor field visibility.
+   - Clean card-based layout with responsive grids.
+   - Top Navigation Bar showing system connection status (Raspberry Pi Connected / Disconnected indicator), current flight mode, and a prominent red "EMERGENCY LAND / KILL SWITCH" button.
+
+2. Feature Panel 1: Interactive GIS Map (Leaflet.js)
+   - Real-time drone position marker (with dynamic rotation heading).
+   - Dynamic overlay representing:
+     * Field boundaries.
+     * Covered spray area (highlighted in translucent green).
+     * Area remaining to be sprayed (highlighted in translucent orange).
+   - Quick map stats overlay: Total Area (ha), Area Covered (ha), Area Remaining (ha).
+
+3. Feature Panel 2: Drone Diagnostics
+   - Battery Status: Visual gauge/bar showing battery percentage (calibrated for 44.4V Li-Po battery pack), voltage, and estimated remaining flight time (~30 min capacity).
+   - Flight Speed: Digital gauge displaying speed in m/s (typical operational range 3-7 m/s).
+   - Spray System Level: Liquid tank gauge showing 0-20L capacity, current flow rate (L/min), and pump active status.
+   - Drone Perspective: Placeholder video container (simulating an RTSP/MJPEG video feed stream from the onboard camera).
+
+4. Feature Panel 3: Task Manager
+   - Mission status indicator (IDLE, MAPPING, SPRAYING, PAUSED, RETURNING TO BASE).
+   - Progress bar showing current task completion percentage.
+   - Mission controls: "Start Mission", "Pause Spraying", "Return to Launch (RTL)".
+   - Mission log table/list showing real-time event logs (e.g., "Pump Started", "Low Tank Warning", "Waypoint 4 Reached").
+
+5. Feature Panel 4: Override Control (Manual Mode)
+   - Manual Override Switch (Toggle to take over from autonomous ROS2 navigation).
+   - Manual Spray Trigger (ON/OFF switch for the pump).
+   - Directional Control Pad / Joystick representation for manual positioning.
+   - Altitude & Spray Height Hold Controls (target 2-3m above crop canopy).
+
+### Technical Constraints:
+- Provide all HTML, CSS, and JS in a clean, self-contained single file (`index.html`) so it can be served locally directly from the Pi 5.
+- Include mock JavaScript telemetry generators (`setInterval`) that update all map coordinates, battery levels, speed, liquid volume, and diagnostic visuals in real time to simulate live flight data for testing.
+- Include structured code hooks/comments where WebSocket connections (`ws://192.168.x.x:8080`) can replace mock telemetry data later.

@@ -1,0 +1,52 @@
+Please refactor and modernize my single-file HTML/CSS/JS drone Ground Control Station (GCS) code (`index.html`). The goal is to overhaul the current layout into a single-screen, non-scrolling UI inspired by high-end enterprise UAV flight interfaces (DJI Pilot 2, Autel Explorer, Skydio Enterprise).
+
+### 1. LAYOUT ARCHITECTURE & ZERO-SCROLL SPECIFICATION
+- Strict Viewport Constraints: Force `height: 100vh; width: 100vw; overflow: hidden;` on the container. The entire dashboard must fit on a standard 1080p display without any page-level scrollbars.
+- Left Vertical Dock Rail: Replace the bulky top header navigation with a narrow, fixed vertical glass dock on the far left edge. Include sleek SVG icons for:
+  * Home / System Status
+  * FPV Live Feed & Gimbal Control
+  * Geospatial Map & Flight Corridor
+  * Mission Task Manager
+  * Spray Hydraulics & Diagnostics
+  * System Settings
+  * Emergency Motor Disarm / Kill Switch
+- Slide-Out Glass Drawers: Clicking any dock icon opens an overlapping blur-glass drawer/modal that sits above the main interface, keeping the base layout static.
+
+### 2. MODERN UI & GLASSMORPHISM AESTHETICS
+- Background & Blur: Dark slate palette (`rgba(10, 18, 30, 0.85)`) using heavy backdrop blurring (`backdrop-filter: blur(20px)`), subtle translucent borders (`1px solid rgba(255, 255, 255, 0.12)`), and drop shadows.
+- High-Contrast Telemetry Accents:
+  * Neon Cyan (`#00F0FF`) for telemetry vectors and covered spray area.
+  * Emerald Green (`#00FF88`) for active pump, satellite lock, and healthy battery.
+  * Crimson (`#FF3B30`) for emergency warnings and uncompleted field boundaries.
+- Typography: Clean sans-serif for UI labels, coupled with `DM Mono` / tabular numbers for real-time telemetry data.
+
+### 3. SCREEN REGION BLUEPRINT (MATCHING MODERN UAV GCS LAYOUTS)
+
+A. Top Status Bar (Minimal HUD Strip):
+   - Compact bar showing Raspberry Pi 5 ROS2 status (`CONNECTED / 38ms`), GPS satellite count (`17 SAT / HDOP 0.8`), current flight mode badge (`AUTONOMOUS SPRAY`), battery pack percentage, and live clock/coordinates.
+
+B. Central Main Viewport with Picture-in-Picture (PIP) Swapping:
+   - Primary View: Live FPV camera simulator canvas featuring an integrated HUD Attitude Indicator (roll/pitch artificial horizon line), pitch ladder, dynamic target crosshair, camera resolution pills (`1920x1080`, `1280x720`), ISO/shutter speed metrics, and live recording dot.
+   - PIP Secondary View (Bottom Corner Inset): Leaflet.js interactive satellite map rendering the spray corridor polygon, planned flight path, and live rotating drone marker.
+   - Include a 1-click "PIP Swap" button to seamlessly interchange the main display between the FPV video feed and the Leaflet interactive map.
+
+C. Right Operations Control Panel:
+   - Drone Model & Status Card (`AgroDrone Unit-07 / Pi 5 Bridge`).
+   - Battery & Power Telemetry: Dynamic battery cell bar, pack voltage (`44.4V`), flight time remaining, and discharge rate.
+   - Agricultural Spray Hydraulics: Dynamic 20L tank level gauge, flow rate (`L/min`), pressure bar readout (`bar`), and pump toggle switch.
+   - D-Pad & Camera Controls: A rounded, tactile multi-directional D-pad control disc (featuring `AWB` and `DISP` toggles) for gimbal camera pitch/yaw adjustment and trim tuning.
+   - Integrated 360° Compass Rose: Interactive circular HUD compass with real-time heading readout (`260° NE`), wind direction arrow, home point return indicator, and lat/long coordinates.
+
+D. Bottom Mission Deck:
+   - Horizontal mission progress bar with area completion stats (`4.72 / 12.80 ha`).
+   - Action Button Row: `START MISSION`, `PAUSE SPRAY`, `RTL (Return to Launch)`, and `EMERGENCY LAND`.
+   - Real-time scrolling mission event log console.
+
+### 4. FUNCTIONAL CODE INTEGRATION
+- Preserve all functional JavaScript logic from my provided `index.html`:
+  * Telemetry updates (battery decay, tank fluid depletion, area coverage accumulation, speed/altitude random jitter).
+  * Leaflet map route drawing, covered polygon highlights, and dynamic marker heading rotation.
+  * Interactive manual joystick touch/drag events and manual override state handling.
+  * Theme switching state and WebSocket hook comment for Raspberry Pi 5 ROS2 bridge integration.
+
+Please rewrite the complete, self-contained `index.html` file incorporating these specifications, embedded CSS styling, and fully working JavaScript logic.
