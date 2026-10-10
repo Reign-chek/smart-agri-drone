@@ -1,0 +1,186 @@
+# Master Prompt for VS Code AI
+
+Act as an expert Senior Frontend & Robotics Systems Engineer. Transform the single-file prototype (`index.html`) into a production-ready, modular **React (Vite) Ground Control Station (GCS) Dashboard** for an autonomous agricultural drone (`AgroDrone HMI`).
+
+---
+
+## 1. Core Architecture & Tech Stack
+
+* **Framework:** React 18+ with Vite (JavaScript or TypeScript).
+* **Styling:** CSS Modules / Modern CSS with Tailwind CSS or CSS Custom Variables (preserving glassmorphism and cyber-industrial dark/light theme).
+* **Mapping:** Google Maps JavaScript API via `@react-google-maps/api` or `@vis.gl/react-google-maps`.
+* **Demo Google Maps API Key:** `AIzaSyBzrKZ1V-ijoWanKxxw6ZpUY9p0qhCCVrM`
+
+
+* **ROS Bridge Integration:** `roslibjs` for bidirectional Wi-Fi WebSocket communication with Raspberry Pi 5 running ROS2.
+* **Icons:** Lucide React or Inline SVGs.
+* **State Management:** Zustand or React Context (`TelemetryContext` & `MissionContext`).
+
+---
+
+## 2. Directory Structure
+
+Organize the React project cleanly according to modern component architecture:
+
+```text
+src/
+├── assets/
+│   └── icons/
+├── components/
+│   ├── common/
+│   │   ├── GlassCard.jsx
+│   │   ├── Switch.jsx
+│   │   └── MetricBadge.jsx
+│   ├── layout/
+│   │   ├── NavigationRail.jsx
+│   │   ├── Topbar.jsx
+│   │   └── MissionDeck.jsx
+│   ├── drawers/
+│   │   ├── SystemStatusDrawer.jsx
+│   │   ├── FpvDrawer.jsx
+│   │   ├── GeospatialDrawer.jsx
+│   │   ├── MissionDrawer.jsx
+│   │   ├── SprayDrawer.jsx
+│   │   ├── SettingsDrawer.jsx
+│   │   └── DisarmDrawer.jsx
+│   ├── stage/
+│   │   ├── FlightStage.jsx
+│   │   ├── GoogleMapView.jsx
+│   │   ├── FpvHudView.jsx
+│   │   └── PipContainer.jsx
+│   ├── ops/
+│   │   ├── OperationsPanel.jsx
+│   │   ├── AirframeCard.jsx
+│   │   ├── SprayDiagnosticsCard.jsx
+│   │   ├── GimbalJoystick.jsx
+│   │   ├── CompassHeading.jsx
+│   │   └── WeatherDriftCard.jsx
+│   └── modals/
+│       └── ManualOverrideModal.jsx
+├── hooks/
+│   ├── useRos2Bridge.js
+│   ├── useDroneTelemetry.js
+│   ├── useGoogleMapPlanner.js
+│   └── useTheme.js
+├── utils/
+│   ├── geo.js             # Polygon math, inside check, lawnmower path planner
+│   ├── rosTopics.js       # ROS2 topic definitions and message types
+│   └── formatters.js      # Coordinate & time formatting
+├── store/
+│   ├── useTelemetryStore.js
+│   └── useMissionStore.js
+├── App.jsx
+└── main.jsx
+
+```
+
+---
+
+## 3. Key Feature Specifications & Conversions
+
+### A. Google Maps Integration (Replacing Leaflet)
+
+1. Load Google Maps using `LoadScript` or `useJsApiLoader` with Map ID support for dark/satellite styling.
+2. Render map type as **Satellite / Hybrid** by default (`mapTypeId: 'hybrid'`).
+3. Replace Leaflet overlays with native React Google Maps components:
+* **Field Boundary:** `<Polygon>` with editable / custom styling.
+* **Lawnmower Path:** `<Polyline>` (Dashed lines for planned, solid green for sprayed pass).
+* **Drone Position:** Custom Overlay (`<OverlayView>`) or SVG Marker with rotation support based on `telemetry.heading`.
+
+
+4. **Drawing Tool Controls:** Map overlay action bar for:
+* `[DRAW FIELD BOUNDARY]`, `[FINISH BOUNDARY]`, `[UNDO POINT]`, `[CLEAR FIELD]`, `[RECENTER DRONE]`.
+* Enable point-and-click vertex placement on the Google Map when drawing mode is active.
+
+
+
+### B. Bidirectional ROS2 / Raspberry Pi 5 Wi-Fi Connection
+
+Integrate `roslibjs` to connect to `ws://<pi_ip>:9090` (defaulting to `ws://192.168.1.100:9090` with configurable IP in settings):
+
+1. **Subscribed ROS Topics (Telemetry Input):**
+* `/drone/gps/fix` (`sensor_msgs/NavSatFix`): Latitude, Longitude, Altitude, Satellite Count, HDOP.
+* `/drone/battery` (`sensor_msgs/BatteryState`): Voltage, percentage, estimated remaining time.
+* `/drone/imu` (`sensor_msgs/Imu`): Orientation (Roll, Pitch, Yaw / Heading).
+* `/drone/spray/telemetry` (Custom / JSON): Tank level (L), flow rate (L/min), nozzle pressure (bar).
+* `/drone/environment` (`sensor_msgs/FluidPressure` / Custom): Ambient temp, humidity, wind speed, wind direction.
+
+
+2. **Published ROS Topics (Commands & Coordinates Output):**
+* `/mission/field_boundary` (`geometry_msgs/PolygonStamped`): Sends finalized boundary coordinates ($lat, lng$ array) upon closing perimeter.
+* `/mission/parameters` (`std_msgs/String` / JSON): Swath width, headland margin, target dosage (L/ha), flight speed, nozzle mode.
+* `/drone/cmd_vel` or `/gimbal/cmd` (`geometry_msgs/Twist`): Gimbal / manual override control values from virtual joystick.
+* `/flight_command` (`std_msgs/String`): Executable commands (`START`, `PAUSE`, `RTL`, `EMERGENCY_LAND`, `DISARM_MOTORS`).
+
+
+
+### C. Business Logic & Math Utilities (`src/utils/geo.js`)
+
+Refactor the legacy raw JS logic into clean, tested React utility modules:
+
+* `geoArea(vertices)`: Calculate geodesic polygon surface area in hectares ($ha$).
+* `validBoundary(vertices)`: Validate polygon self-intersection and minimum 3 vertices.
+* `generateLawnmower(polygon, swath, margin)`: Calculate parallel sweeping flight lines across the inset polygon.
+* `inside(point, polygon)`: Point-in-polygon geofence containment verification.
+* `updateFumigation()`: Calculate Variable Rate Application (VRA) flow rate based on speed, swath width, and target dosage.
+
+### D. FPV HUD & Picture-in-Picture (PIP)
+
+1. FPV primary view with animated HUD overlays (horizon line, pitch ladder, dynamic crosshair, REC indicator, HUD telemetry chips).
+2. PIP Swap capability: Instantly toggle primary view between FPV camera feed (or RTSP stream placeholder) and Google Maps view.
+
+---
+
+## 4. UI/UX Polishes & Design Upgrades
+
+Take the interface to an aerospace GCS standard:
+
+1. **Glassmorphism 2.0:** High-contrast translucent panels, backdrop blur filters (`backdrop-filter: blur(20px)`), glowing cyan border highlights (`rgba(56,189,248,0.4)`).
+2. **Theme System:** CSS variable-driven dark/light mode toggle with smooth color transitions across all telemetry gauges, rails, and drawers.
+3. **Micro-Interactions & Feedback:**
+* Pulsing live indicators for ROS2 bridge status.
+* Dynamic risk status indicators for **Drift Risk** (Green = Low, Amber = Moderate, Red = High Risk) based on real-time wind speed & humidity.
+* Smooth animated bar transitions for battery level and tank capacity.
+* Interactive virtual joysticks with pointer capture and smooth spring reset.
+
+
+4. **Accessibility & Ergonomics:**
+* Full keyboard accessibility (`M` key for manual override, `ESC` to close modals/drawers).
+* Clear ARIA labels on all mission controls and disarm actions.
+
+
+
+---
+
+## 5. Step-by-Step Implementation Strategy for VS Code AI
+
+Execute the conversion in the following sequence:
+
+1. **Step 1: Setup & Utilities**
+* Create Vite project structure and dependencies (`roslibjs`, `@react-google-maps/api`, `zustand`, `lucide-react`).
+* Port math functions (`geoArea`, `generateLawnmower`, `validBoundary`, `inside`) to `src/utils/geo.js`.
+
+
+2. **Step 2: State & ROS Bridge Hooks**
+* Implement `useTelemetryStore` with fallback simulation mode (for testing without Pi connected) and ROS2 WebSocket connection handler.
+
+
+3. **Step 3: Component Decomposition**
+* Build `Topbar`, `NavigationRail`, `OperationsPanel`, and `MissionDeck`.
+* Implement UI Drawers system using React state/portal.
+
+
+4. **Step 4: Google Maps & Spatial Field Planner**
+* Implement `GoogleMapView` with interactive boundary drawing tool, lawnmower path rendering, and drone overlay marker.
+
+
+5. **Step 5: FPV HUD & Controls**
+* Build `FpvHudView`, `GimbalJoystick`, `CompassHeading`, and `ManualOverrideModal`.
+
+
+6. **Step 6: UI Polish & Styles**
+* Add dark/light CSS themes, glassmorphism enhancements, warning alerts, and responsive layout scaling.
+
+
+
+Begin by setting up the project structure, utility modules, and Zustand store, then proceed component by component.
